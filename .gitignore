@@ -30,3 +30,6 @@ temp_relearn/
 Thumbs.db
 .vscode/
 .idea/
+
+# Local documents and PDFs
+*.pdf
