@@ -1,0 +1,14 @@
+{
+    "5": {
+        "recovered_forget_AP50": 0.038
+    },
+    "10": {
+        "recovered_forget_AP50": 0.082
+    },
+    "20": {
+        "recovered_forget_AP50": 0.145
+    },
+    "50": {
+        "recovered_forget_AP50": 0.26
+    }
+}

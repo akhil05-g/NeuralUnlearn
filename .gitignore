@@ -1,0 +1,32 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Logging
+*.log
+logs/
+
+# Large Datasets (keep sample / YAML config, exclude heavy raw image dumps)
+data/dior_raw/
+data/dior_yolo/images/
+data/dior_yolo/labels/
+
+# Model Checkpoints (weights can be trained or downloaded via releases)
+checkpoints/
+*.pt
+*.pth
+
+# Temporary runs
+checkpoints/yolo_runs/
+runs/
+temp_relearn/
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

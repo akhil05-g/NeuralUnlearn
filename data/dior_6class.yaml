@@ -1,0 +1,8 @@
+# DIOR 6-Class Dataset Configuration for YOLOv8
+path: C:/Users/Akhil/OneDrive/Attachments/Desktop/New folder/forgetting_on_purpose/data/dior_yolo
+train: images/train
+val: images/val
+test: images/test
+
+nc: 6
+names: ['airplane', 'airport', 'vehicle', 'ship', 'harbor', 'windmill']

@@ -1,0 +1,52 @@
+{
+    "Original (M0)": {
+        "retain_mAP50": 0.785,
+        "forget_AP50": 0.742,
+        "leakage_rate": 0.88,
+        "mislabeling_rate": 0.02,
+        "co_occurrence_damage": {
+            "airplane_airport": 0.0,
+            "ship_harbor": 0.0
+        }
+    },
+    "Output Masking": {
+        "retain_mAP50": 0.785,
+        "forget_AP50": 0.0,
+        "leakage_rate": 0.84,
+        "mislabeling_rate": 0.38,
+        "co_occurrence_damage": {
+            "airplane_airport": 0.005,
+            "ship_harbor": 0.002
+        }
+    },
+    "Fine-Tuning": {
+        "retain_mAP50": 0.748,
+        "forget_AP50": 0.125,
+        "leakage_rate": 0.42,
+        "mislabeling_rate": 0.18,
+        "co_occurrence_damage": {
+            "airplane_airport": 0.042,
+            "ship_harbor": 0.038
+        }
+    },
+    "FCE Unlearning (Ours)": {
+        "retain_mAP50": 0.776,
+        "forget_AP50": 0.012,
+        "leakage_rate": 0.065,
+        "mislabeling_rate": 0.03,
+        "co_occurrence_damage": {
+            "airplane_airport": 0.008,
+            "ship_harbor": 0.006
+        }
+    },
+    "Retrained Ref (Gold Std)": {
+        "retain_mAP50": 0.782,
+        "forget_AP50": 0.0,
+        "leakage_rate": 0.04,
+        "mislabeling_rate": 0.025,
+        "co_occurrence_damage": {
+            "airplane_airport": 0.0,
+            "ship_harbor": 0.0
+        }
+    }
+}
