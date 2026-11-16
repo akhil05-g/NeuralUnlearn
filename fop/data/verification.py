@@ -26,6 +26,7 @@ from fop.config import (
     LABELS_VAL_DIR,
     LABELS_TEST_DIR,
     PLOTS_DIR,
+    RESULTS_DIR,
     DIOR_CLASSES,
     CLASS_TO_IDX,
     IDX_TO_CLASS,
@@ -202,7 +203,7 @@ def main():
     print(f"\nVisual inspection samples saved to: {vis_dir}")
 
     # Save summary report to results/
-    audit_report_path = PROJECT_ROOT / "results" / "dataset_audit.json"
+    audit_report_path = RESULTS_DIR / "dataset_audit.json"
     save_results(all_audits, audit_report_path)
     print(f"Full audit report saved to: {audit_report_path}")
     print("=" * 70 + "\n")
