@@ -28,6 +28,7 @@ from PIL import Image, ImageDraw
 from fop.config import (
     DATA_DIR,
     DIOR_YOLO_DIR,
+    DIOR_RETAIN_YOLO_DIR,
     DATA_YAML_PATH,
     DATA_RETAIN_YAML_PATH,
     IMAGES_TRAIN_DIR,
@@ -36,6 +37,12 @@ from fop.config import (
     LABELS_TRAIN_DIR,
     LABELS_VAL_DIR,
     LABELS_TEST_DIR,
+    RETAIN_IMAGES_TRAIN_DIR,
+    RETAIN_IMAGES_VAL_DIR,
+    RETAIN_IMAGES_TEST_DIR,
+    RETAIN_LABELS_TRAIN_DIR,
+    RETAIN_LABELS_VAL_DIR,
+    RETAIN_LABELS_TEST_DIR,
     DIOR_CLASSES,
     CLASS_TO_IDX,
     FORGET_CLASS,
@@ -268,9 +275,9 @@ names: {DIOR_CLASSES}
     DATA_YAML_PATH.write_text(content_6class, encoding="utf-8")
     logger.info("Saved 6-class dataset config to %s", DATA_YAML_PATH)
 
-    # 5-class config (Windmill excluded)
+    # 5-class config (Windmill excluded, dedicated directory with zero class-5 labels)
     content_5class = f"""# DIOR 5-Class Retained-Only Dataset Configuration
-path: {DIOR_YOLO_DIR.as_posix()}
+path: {DIOR_RETAIN_YOLO_DIR.as_posix()}
 train: images/train
 val: images/val
 test: images/test
@@ -356,44 +363,72 @@ def prepare_dior_dataset(
         "test": valid_samples[n_train + n_val :],
     }
 
-    dir_mapping = {
+    dir_mapping_6class = {
         "train": (IMAGES_TRAIN_DIR, LABELS_TRAIN_DIR),
         "val": (IMAGES_VAL_DIR, LABELS_VAL_DIR),
         "test": (IMAGES_TEST_DIR, LABELS_TEST_DIR),
     }
 
-    # Clean existing destination directories
-    for split, (img_dest, lbl_dest) in dir_mapping.items():
-        img_dest.mkdir(parents=True, exist_ok=True)
-        lbl_dest.mkdir(parents=True, exist_ok=True)
-        for f in img_dest.glob("*.*"):
-            f.unlink()
-        for f in lbl_dest.glob("*.txt"):
-            f.unlink()
+    dir_mapping_5class = {
+        "train": (RETAIN_IMAGES_TRAIN_DIR, RETAIN_LABELS_TRAIN_DIR),
+        "val": (RETAIN_IMAGES_VAL_DIR, RETAIN_LABELS_VAL_DIR),
+        "test": (RETAIN_IMAGES_TEST_DIR, RETAIN_LABELS_TEST_DIR),
+    }
+
+    # Clean destination directories
+    for split_dict in [dir_mapping_6class, dir_mapping_5class]:
+        for split, (img_dest, lbl_dest) in split_dict.items():
+            img_dest.mkdir(parents=True, exist_ok=True)
+            lbl_dest.mkdir(parents=True, exist_ok=True)
+            for f in img_dest.glob("*.*"):
+                f.unlink()
+            for f in lbl_dest.glob("*.txt"):
+                f.unlink()
+
+    # Re-indexing map: RETAIN_CLASSES are strictly 0, 1, 2, 3, 4
+    retain_name_to_id = {cname: idx for idx, cname in enumerate(RETAIN_CLASSES)}
 
     stats = {"train": len(splits["train"]), "val": len(splits["val"]), "test": len(splits["test"])}
 
     for split_name, items in splits.items():
-        target_img_dir, target_lbl_dir = dir_mapping[split_name]
+        img_dest_6, lbl_dest_6 = dir_mapping_6class[split_name]
+        img_dest_5, lbl_dest_5 = dir_mapping_5class[split_name]
+
         for item in items:
             stem = item["id"]
             src_img = item["img_path"]
-            dst_img = target_img_dir / src_img.name
-            shutil.copy2(src_img, dst_img)
 
-            # Write standard 6-class YOLO label
-            lbl_file = target_lbl_dir / f"{stem}.txt"
-            lines = []
+            # 1. 6-Class dataset copy & write
+            dst_img_6 = img_dest_6 / src_img.name
+            shutil.copy2(src_img, dst_img_6)
+
+            lines_6class = []
+            lines_5class = []
+
             for obj in item["objs"]:
+                cname = obj["class_name"]
                 cid = obj["class_id"]
                 cx, cy, w, h = obj["bbox_yolo"]
-                lines.append(f"{cid} {cx:.6f} {cy:.6f} {w:.6f} {h:.6f}")
-            lbl_file.write_text("\n".join(lines), encoding="utf-8")
+                lines_6class.append(f"{cid} {cx:.6f} {cy:.6f} {w:.6f} {h:.6f}")
+
+                # If object is NOT windmill, remap to 0-4 and add to 5-class retain dataset
+                if cname in retain_name_to_id:
+                    new_cid = retain_name_to_id[cname]
+                    lines_5class.append(f"{new_cid} {cx:.6f} {cy:.6f} {w:.6f} {h:.6f}")
+
+            (lbl_dest_6 / f"{stem}.txt").write_text("\n".join(lines_6class), encoding="utf-8")
+
+            # 2. 5-Class retain dataset copy & write
+            dst_img_5 = img_dest_5 / src_img.name
+            shutil.copy2(src_img, dst_img_5)
+            # If an image has no retained objects, write empty label file (background image)
+            (lbl_dest_5 / f"{stem}.txt").write_text("\n".join(lines_5class), encoding="utf-8")
 
     # Write YAML dataset manifests
     write_yolo_yaml_configs()
 
     logger.info("Dataset preparation complete! Splits: Train=%d, Val=%d, Test=%d", stats["train"], stats["val"], stats["test"])
+    logger.info("Built 6-class dataset (%s) and clean 5-class retain dataset (%s)", DIOR_YOLO_DIR, DIOR_RETAIN_YOLO_DIR)
     return stats
 
 

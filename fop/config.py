@@ -29,7 +29,8 @@ LOGS_DIR: Path = PROJECT_ROOT / "logs"
 FEATURES_DIR: Path = PROJECT_ROOT / "features"
 PLOTS_DIR: Path = PROJECT_ROOT / "plots"
 
-# DIOR dataset YOLO directory structure
+# DIOR dataset YOLO directory structures
+# 6-Class dataset (full baseline)
 DIOR_YOLO_DIR: Path = DATA_DIR / "dior_yolo"
 IMAGES_DIR: Path = DIOR_YOLO_DIR / "images"
 LABELS_DIR: Path = DIOR_YOLO_DIR / "labels"
@@ -41,6 +42,19 @@ IMAGES_TEST_DIR: Path = IMAGES_DIR / "test"
 LABELS_TRAIN_DIR: Path = LABELS_DIR / "train"
 LABELS_VAL_DIR: Path = LABELS_DIR / "val"
 LABELS_TEST_DIR: Path = LABELS_DIR / "test"
+
+# Dedicated 5-Class Retained dataset (windmill completely purged, re-indexed 0-4)
+DIOR_RETAIN_YOLO_DIR: Path = DATA_DIR / "dior_retain_yolo"
+RETAIN_IMAGES_DIR: Path = DIOR_RETAIN_YOLO_DIR / "images"
+RETAIN_LABELS_DIR: Path = DIOR_RETAIN_YOLO_DIR / "labels"
+
+RETAIN_IMAGES_TRAIN_DIR: Path = RETAIN_IMAGES_DIR / "train"
+RETAIN_IMAGES_VAL_DIR: Path = RETAIN_IMAGES_DIR / "val"
+RETAIN_IMAGES_TEST_DIR: Path = RETAIN_IMAGES_DIR / "test"
+
+RETAIN_LABELS_TRAIN_DIR: Path = RETAIN_LABELS_DIR / "train"
+RETAIN_LABELS_VAL_DIR: Path = RETAIN_LABELS_DIR / "val"
+RETAIN_LABELS_TEST_DIR: Path = RETAIN_LABELS_DIR / "test"
 
 DATA_YAML_PATH: Path = DATA_DIR / "dior_6class.yaml"
 DATA_RETAIN_YAML_PATH: Path = DATA_DIR / "dior_5class_retain.yaml"

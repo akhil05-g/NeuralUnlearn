@@ -107,7 +107,9 @@ def run_fce_unlearning(
 
     # Save FCE-modulated intermediate checkpoint
     fce_init_pt = save_dir / "fce_initialized.pt"
-    student.save(str(fce_init_pt))
+    # Load frozen teacher model M0 for knowledge distillation on retained categories
+    logger.info("Setting up frozen teacher detector M0 for distillation regularization (alpha=%.2f, temp=%.1f)...", ALPHA_DISTILL, TEMPERATURE)
+    teacher = YOLO(str(original_checkpoint))
 
     # Fine-tune student on retained-class data with lower lr to allow protected representations to settle
     run_project = CHECKPOINTS_DIR / "yolo_runs"

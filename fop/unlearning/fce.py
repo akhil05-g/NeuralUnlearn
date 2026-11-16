@@ -81,22 +81,20 @@ class FuzzyChannelErasure:
 
     @staticmethod
     def _membership_low(x: np.ndarray) -> np.ndarray:
-        """Trapezoidal/descending membership for LOW importance [0.0, 0.4]."""
-        # 1.0 when x <= 0.2, ramps down to 0 at x = 0.4
-        return np.clip((0.4 - x) / (0.4 - 0.2 + 1e-6), 0.0, 1.0)
+        """Trapezoidal/descending membership for LOW importance [0.0, 0.45]."""
+        return np.clip((0.45 - x) / (0.45 - 0.15 + 1e-6), 0.0, 1.0)
 
     @staticmethod
     def _membership_medium(x: np.ndarray) -> np.ndarray:
-        """Triangular membership for MEDIUM importance centered at 0.5."""
-        left = (x - 0.25) / (0.50 - 0.25 + 1e-6)
-        right = (0.75 - x) / (0.75 - 0.50 + 1e-6)
+        """Triangular membership for MEDIUM importance centered at 0.50."""
+        left = (x - 0.20) / (0.50 - 0.20 + 1e-6)
+        right = (0.80 - x) / (0.80 - 0.50 + 1e-6)
         return np.clip(np.minimum(left, right), 0.0, 1.0)
 
     @staticmethod
     def _membership_high(x: np.ndarray) -> np.ndarray:
-        """Trapezoidal/ascending membership for HIGH importance [0.6, 1.0]."""
-        # 0.0 when x <= 0.6, ramps up to 1.0 at x >= 0.8
-        return np.clip((x - 0.6) / (0.8 - 0.6 + 1e-6), 0.0, 1.0)
+        """Trapezoidal/ascending membership for HIGH importance [0.45, 1.0]."""
+        return np.clip((x - 0.45) / (0.75 - 0.45 + 1e-6), 0.0, 1.0)
 
     def _compute_channel_erasure_weights(self) -> np.ndarray:
         """
